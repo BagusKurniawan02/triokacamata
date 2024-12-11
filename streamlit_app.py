@@ -76,9 +76,14 @@ if uploaded_file is not None:
     img = load_image(uploaded_file)
     st.image(img, caption="Original Image", use_container_width=True)
 
-    # Pengaturan rotasi
+    # Pengaturan rotasi manual
     rotation_angle = st.slider("Rotate Image", 0, 360, 0)
     img_rotated = rotate_image(img, rotation_angle)
+
+    # Pengaturan rotasi otomatis setiap 45 derajat
+    if st.button("Rotate 45° Automatically"):
+        rotation_angle = (rotation_angle + 45) % 360
+        img_rotated = rotate_image(img, rotation_angle)
 
     # Pengaturan kecerahan
     brightness_factor = st.slider("Adjust Brightness", 0.1, 2.0, 1.0)
