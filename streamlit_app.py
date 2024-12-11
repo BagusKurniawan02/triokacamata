@@ -31,12 +31,12 @@ uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png", "jpeg
 if uploaded_file is not None:
     # Load image
     img = load_image(uploaded_file)
-    st.image(img, caption="Original Image", use_column_width=True)
+    st.image(img, caption="Original Image", use_container_width=True)
 
     # Pengaturan rotasi
     rotation_angle = st.slider("Rotate Image", 0, 360, 0)
     img_rotated = rotate_image(img, rotation_angle)
-    st.image(img_rotated, caption="Rotated Image", use_column_width=True)
+    st.image(img_rotated, caption="Rotated Image", use_container_width=True)
 
     # Pilihan format gambar untuk diunduh
     format_type = st.selectbox("Choose image format to download", ["PNG", "JPEG"])
