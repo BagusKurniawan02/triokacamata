@@ -69,6 +69,7 @@ if uploaded_file is not None:
     # Pengaturan orientasi
     orientation = st.radio("Change Orientation", ("Original", "Portrait", "Landscape"))
     img_oriented = change_orientation(img, orientation) if orientation != "Original" else img
+    st.image(img_oriented, caption="Image After Orientation Change", use_container_width=True)
 
     # Pilihan mode rotasi
     rotation_mode = st.radio("Rotation Mode", ("Manual", "Automatic"))
