@@ -31,21 +31,13 @@ def change_orientation(img, orientation):
         return img.rotate(90, expand=True)
     return img
 
-# Fungsi untuk mengubah warna gambar
-def apply_color_filter(img, color):
-    if color == "Purple":
-        return ImageOps.colorize(img.convert("L"), black="black", white="purple")
-    elif color == "Orange":
-        return ImageOps.colorize(img.convert("L"), black="black", white="orange")
-    elif color == "Yellow":
-        return ImageOps.colorize(img.convert("L"), black="black", white="yellow")
-    elif color == "Green":
-        return ImageOps.colorize(img.convert("L"), black="black", white="green")
-    elif color == "Blue":
-        return ImageOps.colorize(img.convert("L"), black="black", white="blue")
-    elif color == "Indigo":
-        return ImageOps.colorize(img.convert("L"), black="black", white="indigo")
-    return img
+# Fungsi untuk mengubah komposisi warna RGB gambar
+def adjust_color(img, red_factor, green_factor, blue_factor):
+    r, g, b = img.split()
+    r = r.point(lambda i: i * red_factor)
+    g = g.point(lambda i: i * green_factor)
+    b = b.point(lambda i: i * blue_factor)
+    return Image.merge("RGB", (r, g, b))
 
 # Fungsi untuk mengonversi gambar ke format byte agar bisa di-download
 def convert_image_to_bytes(img, format_type):
@@ -87,9 +79,12 @@ if uploaded_file is not None:
     orientation = st.radio("Change Orientation", ("Original", "Portrait", "Landscape"))
     img_oriented = change_orientation(img_scaled, orientation) if orientation != "Original" else img_scaled
 
-    # Pengaturan warna
-    color = st.radio("Apply Color Filter", ("None", "Purple", "Orange", "Yellow", "Green", "Blue", "Indigo"))
-    img_colored = apply_color_filter(img_oriented, color) if color != "None" else img_oriented
+    # Pengaturan komposisi warna RGB
+    st.write("Adjust RGB Composition:")
+    red_factor = st.slider("Red Intensity", 0.0, 2.0, 1.0)
+    green_factor = st.slider("Green Intensity", 0.0, 2.0, 1.0)
+    blue_factor = st.slider("Blue Intensity", 0.0, 2.0, 1.0)
+    img_colored = adjust_color(img_oriented, red_factor, green_factor, blue_factor)
 
     st.image(img_colored, caption="Edited Image", use_container_width=True)
 
