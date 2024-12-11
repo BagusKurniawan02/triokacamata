@@ -46,22 +46,22 @@ uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png", "jpeg
 if uploaded_file is not None:
     # Load image
     img = load_image(uploaded_file)
-    st.image(img, caption="Original Image", use_column_width=True)
+    st.image(img, caption="Original Image", use_container_width=True)
     
     # Pengaturan kecerahan
     brightness_factor = st.slider("Adjust Brightness", 0.1, 2.0, 1.0)
     img_bright = adjust_brightness(img, brightness_factor)
-    st.image(img_bright, caption="Brightness Adjusted", use_column_width=True)
+    st.image(img_bright, caption="Brightness Adjusted", use_container_width=True)
     
     # Pengaturan rotasi
     rotation_angle = st.slider("Rotate Image", 0, 360, 0)
     img_rotated = rotate_image(img_bright, rotation_angle)
-    st.image(img_rotated, caption="Rotated Image", use_column_width=True)
+    st.image(img_rotated, caption="Rotated Image", use_container_width=True)
     
     # Pengaturan Zoom
     zoom_factor = st.slider("Zoom In/Out", 0.1, 3.0, 1.0)
     img_zoomed = zoom_image(img_rotated, zoom_factor)
-    st.image(img_zoomed, caption="Zoomed Image", use_column_width=True)
+    st.image(img_zoomed, caption="Zoomed Image", use_container_width=True)
     
     # Pilihan format gambar untuk diunduh
     format_type = st.selectbox("Choose image format to download", ["PNG", "JPEG", "PDF"])
