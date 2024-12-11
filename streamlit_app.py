@@ -23,6 +23,14 @@ def scale_image(img, scale_factor):
     new_height = int(height * scale_factor)
     return img.resize((new_width, new_height))
 
+# Fungsi untuk mengubah orientasi gambar menjadi potret atau lanskap
+def change_orientation(img, orientation):
+    if orientation == "Portrait" and img.width > img.height:
+        return img.rotate(90, expand=True)
+    elif orientation == "Landscape" and img.height > img.width:
+        return img.rotate(90, expand=True)
+    return img
+
 # Fungsi untuk mengonversi gambar ke format byte agar bisa di-download
 def convert_image_to_bytes(img, format_type):
     img_byte_arr = io.BytesIO()
@@ -37,7 +45,7 @@ def convert_image_to_bytes(img, format_type):
 
 # Layout Streamlit
 st.title("Image Editor")
-st.write("Upload an image and edit it with rotation, scaling, and brightness adjustments.")
+st.write("Upload an image and edit it with rotation, scaling, brightness, and orientation adjustments.")
 
 # Upload gambar
 uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png", "jpeg"])
@@ -48,23 +56,27 @@ if uploaded_file is not None:
     st.image(img, caption="Original Image", use_container_width=True)
 
     # Pengaturan rotasi
-    rotation_angle = st.slider("Rotasi Gambar", 0, 360, 0)
+    rotation_angle = st.slider("Rotate Image", 0, 360, 0)
     img_rotated = rotate_image(img, rotation_angle)
 
     # Pengaturan kecerahan
-    brightness_factor = st.slider("Atur Kecerahan", 0.1, 2.0, 1.0)
+    brightness_factor = st.slider("Adjust Brightness", 0.1, 2.0, 1.0)
     img_bright = adjust_brightness(img_rotated, brightness_factor)
 
     # Pengaturan scale
-    scale_factor = st.slider("Atur Keburaman", 0.1, 3.0, 1.0)
+    scale_factor = st.slider("Scale Image", 0.1, 3.0, 1.0)
     img_scaled = scale_image(img_bright, scale_factor)
 
-    st.image(img_scaled, caption="Edited Image", use_container_width=True)
+    # Pengaturan orientasi
+    orientation = st.radio("Change Orientation", ("Original", "Portrait", "Landscape"))
+    img_oriented = change_orientation(img_scaled, orientation) if orientation != "Original" else img_scaled
+
+    st.image(img_oriented, caption="Edited Image", use_container_width=True)
 
     # Tombol download untuk setiap format
     st.write("Download the edited image in your preferred format:")
 
-    img_png = convert_image_to_bytes(img_scaled, "PNG")
+    img_png = convert_image_to_bytes(img_oriented, "PNG")
     st.download_button(
         label="Download as PNG",
         data=img_png,
@@ -72,7 +84,7 @@ if uploaded_file is not None:
         mime="image/png"
     )
 
-    img_jpeg = convert_image_to_bytes(img_scaled, "JPEG")
+    img_jpeg = convert_image_to_bytes(img_oriented, "JPEG")
     st.download_button(
         label="Download as JPEG",
         data=img_jpeg,
@@ -80,7 +92,7 @@ if uploaded_file is not None:
         mime="image/jpeg"
     )
 
-    img_pdf = convert_image_to_bytes(img_scaled, "PDF")
+    img_pdf = convert_image_to_bytes(img_oriented, "PDF")
     st.download_button(
         label="Download as PDF",
         data=img_pdf,
