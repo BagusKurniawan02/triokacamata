@@ -2,62 +2,52 @@ import streamlit as st
 from PIL import Image
 import io
 
-# Judul aplikasi
-st.title("Rotating Picture App")
+# Fungsi untuk memuat gambar
+def load_image(image_file):
+    img = Image.open(image_file)
+    return img
+
+# Fungsi untuk merotasi gambar
+def rotate_image(img, angle):
+    return img.rotate(angle, expand=True)
+
+# Fungsi untuk mengonversi gambar ke format byte agar bisa di-download
+def convert_image_to_bytes(img, format_type):
+    img_byte_arr = io.BytesIO()
+    if format_type == "PNG":
+        img.save(img_byte_arr, format='PNG')
+    elif format_type == "JPEG":
+        img.save(img_byte_arr, format='JPEG')
+    img_byte_arr.seek(0)
+    return img_byte_arr
+
+# Layout Streamlit
+st.title("Image Rotator")
+st.write("Upload an image and rotate it to your desired angle.")
 
 # Upload gambar
-gupl = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
+uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png", "jpeg"])
 
-if gupl is not None:
-    # Membuka gambar yang diunggah
-    img = Image.open(gupl)
+if uploaded_file is not None:
+    # Load image
+    img = load_image(uploaded_file)
+    st.image(img, caption="Original Image", use_column_width=True)
 
-    # Menampilkan gambar asli
-    st.subheader("Original Image")
-    st.image(img, caption="Uploaded Image", use_column_width=True)
+    # Pengaturan rotasi
+    rotation_angle = st.slider("Rotate Image", 0, 360, 0)
+    img_rotated = rotate_image(img, rotation_angle)
+    st.image(img_rotated, caption="Rotated Image", use_column_width=True)
 
-    # Slider untuk menentukan rotasi
-    rotation_angle = st.slider("Select Rotation Angle (degrees):", -360, 360, 0)
+    # Pilihan format gambar untuk diunduh
+    format_type = st.selectbox("Choose image format to download", ["PNG", "JPEG"])
 
-    # Memutar gambar
-    rotated_img = img.rotate(rotation_angle, expand=True)
+    # Konversi gambar yang sudah dirotasi menjadi format byte untuk download
+    img_for_download = convert_image_to_bytes(img_rotated, format_type)
 
-    # Menampilkan gambar yang telah diputar
-    st.subheader("Rotated Image")
-    st.image(rotated_img, caption=f"Image rotated by {rotation_angle} degrees", use_column_width=True)
-
-    # Konversi gambar untuk format yang berbeda
-    img_download = rotated_img.convert("RGB")
-    img_bytes_jpg = io.BytesIO()
-    img_bytes_png = io.BytesIO()
-    img_bytes_pdf = io.BytesIO()
-
-    img_download.save(img_bytes_jpg, format="JPEG")
-    img_download.save(img_bytes_png, format="PNG")
-    img_download.save(img_bytes_pdf, format="PDF")
-
-    img_bytes_jpg.seek(0)
-    img_bytes_png.seek(0)
-    img_bytes_pdf.seek(0)
-
-    # Tombol untuk mengunduh gambar yang telah diputar dalam format berbeda
+    # Tombol download
     st.download_button(
-        label="Download as JPEG",
-        data=img_bytes_jpg,
-        file_name="rotated_image.jpg",
-        mime="image/jpeg"
-    )
-
-    st.download_button(
-        label="Download as PNG",
-        data=img_bytes_png,
-        file_name="rotated_image.png",
-        mime="image/png"
-    )
-
-    st.download_button(
-        label="Download as PDF",
-        data=img_bytes_pdf,
-        file_name="rotated_image.pdf",
-        mime="application/pdf"
+        label=f"Download Image as {format_type}",
+        data=img_for_download,
+        file_name=f"rotated_image.{format_type.lower()}",
+        mime=f"image/{format_type.lower()}"
     )
