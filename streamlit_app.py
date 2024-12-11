@@ -18,6 +18,8 @@ def convert_image_to_bytes(img, format_type):
         img.save(img_byte_arr, format='PNG')
     elif format_type == "JPEG":
         img.save(img_byte_arr, format='JPEG')
+    elif format_type == "PDF":
+        img.save(img_byte_arr, format='PDF')
     img_byte_arr.seek(0)
     return img_byte_arr
 
@@ -38,16 +40,29 @@ if uploaded_file is not None:
     img_rotated = rotate_image(img, rotation_angle)
     st.image(img_rotated, caption="Rotated Image", use_container_width=True)
 
-    # Pilihan format gambar untuk diunduh
-    format_type = st.selectbox("Choose image format to download", ["PNG", "JPEG"])
+    # Tombol download untuk setiap format
+    st.write("Download the rotated image in your preferred format:")
 
-    # Konversi gambar yang sudah dirotasi menjadi format byte untuk download
-    img_for_download = convert_image_to_bytes(img_rotated, format_type)
-
-    # Tombol download
+    img_png = convert_image_to_bytes(img_rotated, "PNG")
     st.download_button(
-        label=f"Download Image as {format_type}",
-        data=img_for_download,
-        file_name=f"rotated_image.{format_type.lower()}",
-        mime=f"image/{format_type.lower()}"
+        label="Download as PNG",
+        data=img_png,
+        file_name="rotated_image.png",
+        mime="image/png"
+    )
+
+    img_jpeg = convert_image_to_bytes(img_rotated, "JPEG")
+    st.download_button(
+        label="Download as JPEG",
+        data=img_jpeg,
+        file_name="rotated_image.jpeg",
+        mime="image/jpeg"
+    )
+
+    img_pdf = convert_image_to_bytes(img_rotated, "PDF")
+    st.download_button(
+        label="Download as PDF",
+        data=img_pdf,
+        file_name="rotated_image.pdf",
+        mime="application/pdf"
     )
