@@ -3,7 +3,9 @@ from PIL import Image, ImageEnhance
 import io
 
 # Nama Kelompok
-st.markdown("### Kelompok: Bagus Eric Kurniawan, Muchammad Ilham Bintang, Muhammad Rafi Fauzan")
+st.markdown("Bagus Eric Kurniawan")
+st.markdown("Muchammad Ilham Bintang")
+st.markdown("Muhammad Rafi Fauzan")
 
 # Fungsi untuk memuat gambar
 def load_image(image_file):
