@@ -25,7 +25,7 @@ def convert_image_to_bytes(img, format_type):
 
 # Layout Streamlit
 st.title("Image Rotator")
-st.write("Upload an image and rotate it to your desired angle.")
+st.write("Upload Gambar untuk Merotasi by.triokacamata.")
 
 # Upload gambar
 uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png", "jpeg"])
