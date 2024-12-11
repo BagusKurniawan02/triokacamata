@@ -48,15 +48,15 @@ if uploaded_file is not None:
     st.image(img, caption="Original Image", use_container_width=True)
 
     # Pengaturan rotasi
-    rotation_angle = st.slider("Rotate Image", 0, 360, 0)
+    rotation_angle = st.slider("Rotasi Gambar", 0, 360, 0)
     img_rotated = rotate_image(img, rotation_angle)
 
     # Pengaturan kecerahan
-    brightness_factor = st.slider("Adjust Brightness", 0.1, 2.0, 1.0)
+    brightness_factor = st.slider("Atur Kecerahan", 0.1, 2.0, 1.0)
     img_bright = adjust_brightness(img_rotated, brightness_factor)
 
     # Pengaturan scale
-    scale_factor = st.slider("Scale Image", 0.1, 3.0, 1.0)
+    scale_factor = st.slider("Atur Keburaman", 0.1, 3.0, 1.0)
     img_scaled = scale_image(img_bright, scale_factor)
 
     st.image(img_scaled, caption="Edited Image", use_container_width=True)
