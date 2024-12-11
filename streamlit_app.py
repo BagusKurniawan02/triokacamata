@@ -34,6 +34,14 @@ def change_orientation(img, orientation):
         return img.rotate(90, expand=True)
     return img
 
+# Fungsi untuk mengubah intensitas warna RGB
+def adjust_rgb(img, red_factor, green_factor, blue_factor):
+    r, g, b = img.split()
+    r = r.point(lambda i: i * red_factor)
+    g = g.point(lambda i: i * green_factor)
+    b = b.point(lambda i: i * blue_factor)
+    return Image.merge("RGB", (r, g, b))
+
 # Fungsi untuk mengonversi gambar ke format byte agar bisa di-download
 def convert_image_to_bytes(img, format_type):
     img_byte_arr = io.BytesIO()
@@ -48,7 +56,7 @@ def convert_image_to_bytes(img, format_type):
 
 # Layout Streamlit
 st.title("Image Editor")
-st.write("Upload an image and edit it with rotation, scaling, brightness, and orientation adjustments.")
+st.write("Upload an image and edit it with orientation, rotation, scaling, brightness, and RGB adjustments.")
 
 # Upload gambar
 uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png", "jpeg"])
@@ -58,17 +66,21 @@ if uploaded_file is not None:
     img = load_image(uploaded_file)
     st.image(img, caption="Original Image", use_container_width=True)
 
+    # Pengaturan orientasi
+    orientation = st.radio("Change Orientation", ("Original", "Portrait", "Landscape"))
+    img_oriented = change_orientation(img, orientation) if orientation != "Original" else img
+
     # Pilihan mode rotasi
     rotation_mode = st.radio("Rotation Mode", ("Manual", "Automatic"))
 
     if rotation_mode == "Manual":
         # Pengaturan rotasi manual
         manual_rotation = st.slider("Manual Rotation (0-360°)", 0, 360, 0)
-        img_rotated = rotate_image(img, manual_rotation)
+        img_rotated = rotate_image(img_oriented, manual_rotation)
     else:
         # Pengaturan rotasi otomatis
         auto_rotation = st.selectbox("Automatic Rotation", [0, 45, 90, 135, 180, 225, 270, 315, 360])
-        img_rotated = rotate_image(img, auto_rotation)
+        img_rotated = rotate_image(img_oriented, auto_rotation)
 
     # Pengaturan kecerahan
     brightness_factor = st.slider("Adjust Brightness", 0.1, 2.0, 1.0)
@@ -78,16 +90,19 @@ if uploaded_file is not None:
     scale_factor = st.slider("Scale Image", 0.1, 3.0, 1.0)
     img_scaled = scale_image(img_bright, scale_factor)
 
-    # Pengaturan orientasi
-    orientation = st.radio("Change Orientation", ("Original", "Portrait", "Landscape"))
-    img_oriented = change_orientation(img_scaled, orientation) if orientation != "Original" else img_scaled
+    # Pengaturan RGB
+    st.write("Adjust RGB Intensity:")
+    red_factor = st.slider("Red Intensity", 0.0, 2.0, 1.0)
+    green_factor = st.slider("Green Intensity", 0.0, 2.0, 1.0)
+    blue_factor = st.slider("Blue Intensity", 0.0, 2.0, 1.0)
+    img_rgb = adjust_rgb(img_scaled, red_factor, green_factor, blue_factor)
 
-    st.image(img_oriented, caption="Edited Image", use_container_width=True)
+    st.image(img_rgb, caption="Edited Image", use_container_width=True)
 
     # Tombol download untuk setiap format
     st.write("Download the edited image in your preferred format:")
 
-    img_png = convert_image_to_bytes(img_oriented, "PNG")
+    img_png = convert_image_to_bytes(img_rgb, "PNG")
     st.download_button(
         label="Download as PNG",
         data=img_png,
@@ -95,7 +110,7 @@ if uploaded_file is not None:
         mime="image/png"
     )
 
-    img_jpeg = convert_image_to_bytes(img_oriented, "JPEG")
+    img_jpeg = convert_image_to_bytes(img_rgb, "JPEG")
     st.download_button(
         label="Download as JPEG",
         data=img_jpeg,
@@ -103,7 +118,7 @@ if uploaded_file is not None:
         mime="image/jpeg"
     )
 
-    img_pdf = convert_image_to_bytes(img_oriented, "PDF")
+    img_pdf = convert_image_to_bytes(img_rgb, "PDF")
     st.download_button(
         label="Download as PDF",
         data=img_pdf,
