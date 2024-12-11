@@ -45,7 +45,7 @@ def convert_image_to_bytes(img, format_type):
 
 # Layout Streamlit
 st.title("Image Editor")
-st.write("Upload an image and edit it with rotation, scaling, brightness, and orientation adjustments.")
+st.write("by triokacamata")
 
 # Upload gambar
 uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png", "jpeg"])
