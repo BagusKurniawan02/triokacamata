@@ -58,17 +58,21 @@ if uploaded_file is not None:
     img = load_image(uploaded_file)
     st.image(img, caption="Original Image", use_container_width=True)
 
-    # Pengaturan rotasi manual
-    manual_rotation = st.slider("Manual Rotation (0-360°)", 0, 360, 0)
-    img_manual_rotated = rotate_image(img, manual_rotation)
+    # Pilihan mode rotasi
+    rotation_mode = st.radio("Rotation Mode", ("Manual", "Automatic"))
 
-    # Pengaturan rotasi otomatis
-    auto_rotation = st.selectbox("Automatic Rotation", [0, 45, 90, 135, 180, 225, 270, 315, 360])
-    img_auto_rotated = rotate_image(img_manual_rotated, auto_rotation)
+    if rotation_mode == "Manual":
+        # Pengaturan rotasi manual
+        manual_rotation = st.slider("Manual Rotation (0-360°)", 0, 360, 0)
+        img_rotated = rotate_image(img, manual_rotation)
+    else:
+        # Pengaturan rotasi otomatis
+        auto_rotation = st.selectbox("Automatic Rotation", [0, 45, 90, 135, 180, 225, 270, 315, 360])
+        img_rotated = rotate_image(img, auto_rotation)
 
     # Pengaturan kecerahan
     brightness_factor = st.slider("Adjust Brightness", 0.1, 2.0, 1.0)
-    img_bright = adjust_brightness(img_auto_rotated, brightness_factor)
+    img_bright = adjust_brightness(img_rotated, brightness_factor)
 
     # Pengaturan scale
     scale_factor = st.slider("Scale Image", 0.1, 3.0, 1.0)
